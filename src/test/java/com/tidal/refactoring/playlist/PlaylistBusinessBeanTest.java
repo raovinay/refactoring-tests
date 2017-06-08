@@ -52,11 +52,11 @@ public class PlaylistBusinessBeanTest {
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
 
         assertEquals(2, playListTracks.size());
-        PlayList playList = playListTracks.get(0).getTrackPlayList();
-        assertEquals(378, playList.getNrOfTracks());
-        assertEquals(378, playList.getPlayListTracks().size());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(5, playListTracks.get(0).getIndex());
         assertEquals(6, playListTracks.get(1).getIndex());
+        assertEquals(new Float(60*60*2+50*2), playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
@@ -67,9 +67,8 @@ public class PlaylistBusinessBeanTest {
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, -1);
 
         assertEquals(2, playListTracks.size());
-        PlayList playList = playListTracks.get(0).getTrackPlayList();
-        assertEquals(378, playList.getNrOfTracks());
-        assertEquals(378, playList.getPlayListTracks().size());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(376, playListTracks.get(0).getIndex());
         assertEquals(377, playListTracks.get(1).getIndex());
     }
@@ -82,9 +81,8 @@ public class PlaylistBusinessBeanTest {
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 400);
 
         assertEquals(2, playListTracks.size());
-        PlayList playList = playListTracks.get(0).getTrackPlayList();
-        assertEquals(378, playList.getNrOfTracks());
-        assertEquals(378, playList.getPlayListTracks().size());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(376, playListTracks.get(0).getIndex());
         assertEquals(377, playListTracks.get(1).getIndex());
     }
@@ -97,9 +95,8 @@ public class PlaylistBusinessBeanTest {
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks("TestUUID", trackList, 5);
 
         assertEquals(2, playListTracks.size());
-        PlayList playList = playListTracks.get(0).getTrackPlayList();
-        assertEquals(2, playList.getNrOfTracks());
-        assertEquals(2, playList.getPlayListTracks().size());
+        assertEquals(2, playlistDaoBean.getPlaylistByUUID("TestUUID").getNrOfTracks());
+        assertEquals(2, playlistDaoBean.getPlaylistByUUID("TestUUID").getPlayListTracks().size());
         assertEquals(0, playListTracks.get(0).getIndex());
         assertEquals(1, playListTracks.get(1).getIndex());
     }
@@ -134,9 +131,8 @@ public class PlaylistBusinessBeanTest {
 
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
         assertEquals(2, playListTracks.size());
-        PlayList playList = playListTracks.get(0).getTrackPlayList();
-        assertEquals(378, playList.getNrOfTracks());
-        assertEquals(378, playList.getPlayListTracks().size());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
+        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(5, playListTracks.get(0).getIndex());
         assertEquals(6, playListTracks.get(1).getIndex());
     }
@@ -182,6 +178,7 @@ public class PlaylistBusinessBeanTest {
             track.setArtistId(4);
             track.setTitle("A brand new track");
             track.setId(i);
+            track.setDuration(50);
             trackList.add(track);
         }
         return trackList;

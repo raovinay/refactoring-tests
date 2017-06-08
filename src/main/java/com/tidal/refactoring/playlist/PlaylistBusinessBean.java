@@ -52,7 +52,7 @@ public class PlaylistBusinessBean {
                 playlistTrack.setTrack(track);
                 playlistTrack.setTrackPlaylist(playList);
                 playlistTrack.setDateAdded(new Date());
-                playList.setDuration(addTrackDurationToPlaylist(playList, track));
+                playList.setDuration(adjustTrackDuration(playList, track, true));
                 original.add(toIndex, playlistTrack);
                 added.add(playlistTrack);
                 toIndex++;
@@ -125,6 +125,7 @@ public class PlaylistBusinessBean {
         indexes.sort(Collections.reverseOrder());
         for(int idx:indexes){
             if(validateIndexes(idx, original.size())) {
+                playList.setDuration(adjustTrackDuration(playList, original.get(idx).getTrack(), false));
                 original.remove(idx - 1);
             }
         }
@@ -141,8 +142,9 @@ public class PlaylistBusinessBean {
         return toIndex >= 0 && toIndex <= length;
     }
 
-    private float addTrackDurationToPlaylist(PlayList playList, Track track) {
-        return (track != null ? track.getDuration() : 0)
+    private float adjustTrackDuration(PlayList playList, Track track, boolean add) {
+        return ((track != null ? track.getDuration() : 0)
+                * (add?1:-1))
                 + (playList != null && playList.getDuration() != null ? playList.getDuration() : 0);
     }
 }

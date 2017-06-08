@@ -31,6 +31,7 @@ public class PlaylistBusinessBeanDeleteTests extends PlaylistBusinessBeanTest{
         assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
         assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(new Integer(5), playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().iterator().next().getId());
+        assertEquals(new Float(60*60*2-180*4), playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
@@ -47,6 +48,7 @@ public class PlaylistBusinessBeanDeleteTests extends PlaylistBusinessBeanTest{
         assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
         assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(new Integer(5), playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().iterator().next().getId());
+        assertEquals(new Float(60*60*2-180*4), playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
@@ -62,7 +64,7 @@ public class PlaylistBusinessBeanDeleteTests extends PlaylistBusinessBeanTest{
         assertEquals(new Integer(3), playListTracks.get(1).getId());
         assertEquals(3, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
         assertEquals(3, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-
+        assertEquals(new Float(60*60*2-180*2), playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
@@ -76,7 +78,7 @@ public class PlaylistBusinessBeanDeleteTests extends PlaylistBusinessBeanTest{
         assertEquals(0, playListTracks.size());
         assertEquals(5, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
         assertEquals(5, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-
+        assertEquals(new Float(60*60*2), playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
 
