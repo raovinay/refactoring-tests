@@ -37,6 +37,8 @@ public class PlaylistDaoBean {
         trackPlayList.setPlayListTracks(getPlaylistTracks());
         trackPlayList.setUuid(uuid);
 
+        playlists.put(uuid, trackPlayList);
+
         return trackPlayList;
     }
 
@@ -50,6 +52,7 @@ public class PlaylistDaoBean {
             playListTrack.setIndex(i);
             playListTrack.setTrack(getTrack());
 
+            playListTracks.add(playListTrack);
         }
 
         return playListTracks;
