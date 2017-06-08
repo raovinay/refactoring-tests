@@ -119,11 +119,29 @@ public class PlaylistBusinessBeanTest {
         List<Track> trackList = getTracksForTest(200);
         String uuid = UUID.randomUUID().toString();
         when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid));
-        playlistBusinessBean.addTracks(uuid, trackList, 5);
 
+        playlistBusinessBean.addTracks(uuid, trackList, 5);
     }
 
+    @Test
+    public void testDuplicateTracks(){
+        List<Track> trackList = new ArrayList<>();
+        Track duplicateTrack = getTrack();
+        trackList.add(duplicateTrack);
+        trackList.add(duplicateTrack);
+        String uuid = UUID.randomUUID().toString();
+        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid));
 
+        List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
+        assertEquals(2, playListTracks.size());
+        PlayList playList = playListTracks.get(0).getTrackPlayList();
+        assertEquals(378, playList.getNrOfTracks());
+        assertEquals(378, playList.getPlayListTracks().size());
+        assertEquals(5, playListTracks.get(0).getIndex());
+        assertEquals(6, playListTracks.get(1).getIndex());
+    }
+
+    //private test helper methods
     private PlayList getDefaultPlaylist(String uuid) {
         PlayList trackPlayList = new PlayList();
         trackPlayList.setDeleted(false);
@@ -137,7 +155,6 @@ public class PlaylistBusinessBeanTest {
         return trackPlayList;
     }
 
-    //private test helper methods
     private Set<PlayListTrack> getPlaylistTracks() {
 
         Set<PlayListTrack> playListTracks = new HashSet<PlayListTrack>();

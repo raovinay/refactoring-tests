@@ -42,33 +42,23 @@ public class PlaylistBusinessBean {
                 return Collections.EMPTY_LIST;
             }
 
-            Set<PlayListTrack> originalSet = playList.getPlayListTracks();
-            List<PlayListTrack> original;
-            if (originalSet == null || originalSet.size() == 0)
-                original = new ArrayList<PlayListTrack>();
-            else
-                original = new ArrayList<PlayListTrack>(originalSet);
+            List<PlayListTrack> original = getPlayListTracksSorted(playList);
 
-            Collections.sort(original);
+            List<PlayListTrack> added = new ArrayList<>(tracksToAdd.size());
 
-            List<PlayListTrack> added = new ArrayList<PlayListTrack>(tracksToAdd.size());
-
+            //core add logic
             for (Track track : tracksToAdd) {
                 PlayListTrack playlistTrack = new PlayListTrack();
                 playlistTrack.setTrack(track);
                 playlistTrack.setTrackPlaylist(playList);
                 playlistTrack.setDateAdded(new Date());
-                playlistTrack.setTrack(track);
                 playList.setDuration(addTrackDurationToPlaylist(playList, track));
                 original.add(toIndex, playlistTrack);
                 added.add(playlistTrack);
                 toIndex++;
             }
 
-            int i = 0;
-            for (PlayListTrack track : original) {
-                track.setIndex(i++);
-            }
+            reindex(original);
 
             playList.getPlayListTracks().clear();
             playList.getPlayListTracks().addAll(original);
@@ -76,13 +66,38 @@ public class PlaylistBusinessBean {
 
             return added;
 
-        } catch (Exception e) {
+        }
+        catch (PlaylistException e){
+            throw e;
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new PlaylistException("Generic error");
         }
     }
-    
-	/**
+
+    private List<PlayListTrack> getPlayListTracksSorted(PlayList playList) {
+        Set<PlayListTrack> originalSet = playList.getPlayListTracks();
+        List<PlayListTrack> original;
+        if (originalSet == null || originalSet.size() == 0) {
+            original = new LinkedList<>();
+        }
+        else {
+            original = new LinkedList<>(originalSet);
+        }
+        //consider making the set in the original collection as a treeset?
+        Collections.sort(original);
+        return original;
+    }
+
+    private void reindex(List<PlayListTrack> playListTracks) {
+        int i = 0;
+        for (PlayListTrack track : playListTracks) {
+            track.setIndex(i++);
+        }
+    }
+
+    /**
 	 * Remove the tracks from the playlist located at the sent indexes
 	 */
 	List<PlayListTrack> removeTracks(String uuid, List<Integer> indexes) throws PlaylistException {
