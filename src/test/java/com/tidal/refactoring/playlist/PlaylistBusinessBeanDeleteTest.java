@@ -1,8 +1,13 @@
 package com.tidal.refactoring.playlist;
 
+import com.google.inject.Inject;
+import com.tidal.refactoring.playlist.dao.PlaylistDaoBean;
 import com.tidal.refactoring.playlist.data.PlayListTrack;
-import org.testng.annotations.Guice;
-import org.testng.annotations.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +20,29 @@ import static org.testng.AssertJUnit.assertEquals;
  * Created by raovinay on 08-06-2017.
  */
 @Guice(modules = TestBusinessModule.class)
-public class PlaylistBusinessBeanDeleteTests extends PlaylistBusinessBeanTest{
+public class PlaylistBusinessBeanDeleteTest extends AbstractTest{
+    @InjectMocks
+    PlaylistBusinessBean playlistBusinessBean;
+
+    @Mock
+    PlaylistDaoBean playlistDaoBean;
+
+    @BeforeSuite
+    public void init(){
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        if(playlistDaoBean!=null) {
+            Mockito.reset(playlistDaoBean);
+        }
+    }
+
+    @AfterMethod
+    public void tearDown() throws Exception {
+
+    }
 
     @Test
     public void testDeleteTracksHappy() throws Exception {

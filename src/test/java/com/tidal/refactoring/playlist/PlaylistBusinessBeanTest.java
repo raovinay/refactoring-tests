@@ -22,9 +22,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 @Guice(modules = TestBusinessModule.class)
-public class PlaylistBusinessBeanTest {
-
-    @Inject
+public class PlaylistBusinessBeanTest extends AbstractTest {
     @InjectMocks
     PlaylistBusinessBean playlistBusinessBean;
 
@@ -38,13 +36,16 @@ public class PlaylistBusinessBeanTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        Mockito.reset(playlistDaoBean);
+        if(playlistDaoBean!=null) {
+            Mockito.reset(playlistDaoBean);
+        }
     }
 
     @AfterMethod
     public void tearDown() throws Exception {
 
     }
+
 
     @Test
     public void testAddTracksHapppy() throws Exception {
@@ -146,50 +147,4 @@ public class PlaylistBusinessBeanTest {
         playlistBusinessBean.addTracks("TEST", trackList, 5);
     }
 
-    //private test helper methods
-    protected PlayList getDefaultPlaylist(String uuid, int nrOfTracks) {
-        if(nrOfTracks==0){
-            nrOfTracks=376;
-        }
-        PlayList trackPlayList = new PlayList();
-        trackPlayList.setDeleted(false);
-        trackPlayList.setDuration((float) (60 * 60 * 2));
-        trackPlayList.setId(49834);
-        trackPlayList.setLastUpdated(new Date());
-        trackPlayList.setNrOfTracks(nrOfTracks);
-        trackPlayList.setPlayListName("Collection of great songs");
-        trackPlayList.setPlayListTracks(getPlaylistTracks(nrOfTracks));
-        trackPlayList.setUuid(uuid);
-        return trackPlayList;
-    }
-
-    private Set<PlayListTrack> getPlaylistTracks(int nrOfTracks) {
-
-        Set<PlayListTrack> playListTracks = new HashSet<PlayListTrack>();
-        for (int i = 0; i < nrOfTracks; i++) {
-            PlayListTrack playListTrack = new PlayListTrack();
-            playListTrack.setDateAdded(new Date());
-            playListTrack.setId(i + 1);
-            playListTrack.setIndex(i);
-            playListTrack.setTrack(getTrack());
-
-            playListTracks.add(playListTrack);
-        }
-
-        return playListTracks;
-    }
-
-    private List<Track> getTracksForTest(int nrOfTracks) {
-        List<Track> trackList = new ArrayList<Track>();
-
-        for(int i=0;i<nrOfTracks;i++) {
-            Track track = new Track();
-            track.setArtistId(4);
-            track.setTitle("A brand new track");
-            track.setId(i);
-            track.setDuration(50);
-            trackList.add(track);
-        }
-        return trackList;
-    }
 }
