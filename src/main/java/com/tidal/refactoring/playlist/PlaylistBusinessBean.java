@@ -60,9 +60,7 @@ public class PlaylistBusinessBean {
 
             reindex(original);
 
-            playList.getPlayListTracks().clear();
-            playList.getPlayListTracks().addAll(original);
-            playList.setNrOfTracks(original.size());
+            resetPlayList(playList, original);
 
             return added;
 
@@ -74,6 +72,12 @@ public class PlaylistBusinessBean {
             e.printStackTrace();
             throw new PlaylistException("Generic error");
         }
+    }
+
+    private void resetPlayList(PlayList playList, List<PlayListTrack> newList) {
+        playList.getPlayListTracks().clear();
+        playList.getPlayListTracks().addAll(newList);
+        playList.setNrOfTracks(newList.size());
     }
 
     private List<PlayListTrack> getPlayListTracksSorted(PlayList playList) {
@@ -101,9 +105,37 @@ public class PlaylistBusinessBean {
 	 * Remove the tracks from the playlist located at the sent indexes
 	 */
 	List<PlayListTrack> removeTracks(String uuid, List<Integer> indexes) throws PlaylistException {
-		// TODO
-		return Collections.EMPTY_LIST;
+		//1. get playlist
+        PlayList playList = playlistDaoBean.getPlaylistByUUID(uuid);
+
+        //2. remove track
+        List<PlayListTrack> original = getPlayListTracksSorted(playList);
+        List<PlayListTrack> removed = new ArrayList<>(indexes.size());
+        //populate the remove list first, before deleting from the original list.
+        //had to do this to retain the sequence.
+        for(int idx:indexes){
+            if(validateIndexes(idx, original.size())){
+                removed.add(original.get(idx-1));
+            }
+        }
+        if(removed.size()==0){
+            return Collections.EMPTY_LIST;
+        }
+        //Reverse sort - so that indexes are not messed up while removing.
+        indexes.sort(Collections.reverseOrder());
+        for(int idx:indexes){
+            if(validateIndexes(idx, original.size())) {
+                original.remove(idx - 1);
+            }
+        }
+
+        //3. reindex.
+        reindex(original);
+        //change the original playList object.
+        resetPlayList(playList, original);
+		return removed;
 	}
+
 
     private boolean validateIndexes(int toIndex, int length) {
         return toIndex >= 0 && toIndex <= length;

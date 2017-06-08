@@ -48,7 +48,7 @@ public class PlaylistBusinessBeanTest {
     public void testAddTracksHapppy() throws Exception {
         List<Track> trackList = getTracksForTest(2);
         String uuid = UUID.randomUUID().toString();
-        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid));
+        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid,376));
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
 
         assertEquals(2, playListTracks.size());
@@ -63,7 +63,7 @@ public class PlaylistBusinessBeanTest {
     public void testAddTracksLast() throws Exception {
         List<Track> trackList = getTracksForTest(2);
         String uuid = UUID.randomUUID().toString();
-        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid));
+        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid,376));
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, -1);
 
         assertEquals(2, playListTracks.size());
@@ -78,7 +78,7 @@ public class PlaylistBusinessBeanTest {
     public void testAddTracksLargerIndex() throws Exception {
         List<Track> trackList = getTracksForTest(2);
         String uuid = UUID.randomUUID().toString();
-        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid));
+        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid, 376));
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 400);
 
         assertEquals(2, playListTracks.size());
@@ -118,7 +118,7 @@ public class PlaylistBusinessBeanTest {
     public void testAddToFullPlaylist() throws Exception {
         List<Track> trackList = getTracksForTest(200);
         String uuid = UUID.randomUUID().toString();
-        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid));
+        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid, 376));
 
         playlistBusinessBean.addTracks(uuid, trackList, 5);
     }
@@ -130,7 +130,7 @@ public class PlaylistBusinessBeanTest {
         trackList.add(duplicateTrack);
         trackList.add(duplicateTrack);
         String uuid = UUID.randomUUID().toString();
-        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid));
+        when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid, 376));
 
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
         assertEquals(2, playListTracks.size());
@@ -142,23 +142,26 @@ public class PlaylistBusinessBeanTest {
     }
 
     //private test helper methods
-    private PlayList getDefaultPlaylist(String uuid) {
+    protected PlayList getDefaultPlaylist(String uuid, int nrOfTracks) {
+        if(nrOfTracks==0){
+            nrOfTracks=376;
+        }
         PlayList trackPlayList = new PlayList();
         trackPlayList.setDeleted(false);
         trackPlayList.setDuration((float) (60 * 60 * 2));
         trackPlayList.setId(49834);
         trackPlayList.setLastUpdated(new Date());
-        trackPlayList.setNrOfTracks(376);
+        trackPlayList.setNrOfTracks(nrOfTracks);
         trackPlayList.setPlayListName("Collection of great songs");
-        trackPlayList.setPlayListTracks(getPlaylistTracks());
+        trackPlayList.setPlayListTracks(getPlaylistTracks(nrOfTracks));
         trackPlayList.setUuid(uuid);
         return trackPlayList;
     }
 
-    private Set<PlayListTrack> getPlaylistTracks() {
+    private Set<PlayListTrack> getPlaylistTracks(int nrOfTracks) {
 
         Set<PlayListTrack> playListTracks = new HashSet<PlayListTrack>();
-        for (int i = 0; i < 376; i++) {
+        for (int i = 0; i < nrOfTracks; i++) {
             PlayListTrack playListTrack = new PlayListTrack();
             playListTrack.setDateAdded(new Date());
             playListTrack.setId(i + 1);
