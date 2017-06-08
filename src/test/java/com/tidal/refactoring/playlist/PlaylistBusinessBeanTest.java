@@ -15,6 +15,8 @@ import org.testng.annotations.*;
 import java.util.*;
 
 import static com.tidal.refactoring.playlist.dao.PlaylistDaoBean.getTrack;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
@@ -135,6 +137,13 @@ public class PlaylistBusinessBeanTest {
         assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(5, playListTracks.get(0).getIndex());
         assertEquals(6, playListTracks.get(1).getIndex());
+    }
+
+    @Test(expectedExceptions = PlaylistException.class)
+    public void testExceptions() throws Exception{
+        List<Track> trackList = getTracksForTest(1);
+        doThrow(new RuntimeException("TEST")).when(playlistDaoBean).getPlaylistByUUID(anyString());
+        playlistBusinessBean.addTracks("TEST", trackList, 5);
     }
 
     //private test helper methods
