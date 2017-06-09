@@ -113,8 +113,9 @@ public class PlaylistBusinessBean {
         List<PlayListTrack> removed = new ArrayList<>(indexes.size());
         //populate the remove list first, before deleting from the original list.
         //had to do this to retain the sequence.
+        int size = original.size();
         for(int idx:indexes){
-            if(validateIndexes(idx, original.size())){
+            if(validateIndexes(idx, size)){
                 removed.add(original.get(idx-1));
             }
         }
@@ -124,7 +125,7 @@ public class PlaylistBusinessBean {
         //Reverse sort - so that indexes are not messed up while removing.
         indexes.sort(Collections.reverseOrder());
         for(int idx:indexes){
-            if(validateIndexes(idx, original.size())) {
+            if(validateIndexes(idx, size)) {
                 playList.setDuration(adjustTrackDuration(playList, original.get(idx).getTrack(), false));
                 original.remove(idx - 1);
             }
