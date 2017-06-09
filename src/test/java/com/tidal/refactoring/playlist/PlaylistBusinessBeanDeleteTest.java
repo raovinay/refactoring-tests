@@ -19,7 +19,6 @@ import static org.testng.AssertJUnit.assertEquals;
 /**
  * Created by raovinay on 08-06-2017.
  */
-@Guice(modules = TestBusinessModule.class)
 public class PlaylistBusinessBeanDeleteTest extends AbstractTest{
     @InjectMocks
     PlaylistBusinessBean playlistBusinessBean;

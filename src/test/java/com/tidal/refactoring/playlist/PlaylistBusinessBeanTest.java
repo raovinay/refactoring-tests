@@ -21,7 +21,6 @@ import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
-@Guice(modules = TestBusinessModule.class)
 public class PlaylistBusinessBeanTest extends AbstractTest {
     @InjectMocks
     PlaylistBusinessBean playlistBusinessBean;
