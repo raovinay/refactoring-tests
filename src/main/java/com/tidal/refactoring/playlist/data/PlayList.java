@@ -27,23 +27,20 @@ public class PlayList {
         this.playListTracks = new LinkedHashSet<>();
     }
 
+    //derived fields:
+    public int getNrOfTracks(){
+        return this.playListTracks.size();
+    }
+
+    public float getDuration(){
+        return (float) this.playListTracks.stream().mapToDouble(x -> x.getTrack().getDuration()).sum();
+    }
+
     public void setPlayListTracks(Set<PlayListTrack> tracks){
+        //no matter what order the tracks are sent in, we have to first sort by index and then add in the sorted order.
         playListTracks = new LinkedHashSet<>(new TreeSet<>(tracks));
     }
 
-    public int getValidIndex(int intendedIndex) throws PlaylistValidationException {
-        if (intendedIndex > this.playListTracks.size() || intendedIndex == -1) {
-            intendedIndex = this.playListTracks.size();
-        }
-        if(!isValidIndex(intendedIndex)){
-            throw new PlaylistValidationException();
-        }
-        return intendedIndex;
-    }
-
-    public boolean isValidIndex(int intendedIndex) {
-        return intendedIndex >= 0 && intendedIndex <= this.playListTracks.size();
-    }
 
     public List<PlayListTrack> addTracks(List<Track> tracksToAdd, int toIndex) throws PlaylistValidationException {
         // The index is out of bounds, put it in the end of the list.
@@ -96,15 +93,6 @@ public class PlayList {
         return removed;
     }
 
-    //derived fields:
-    public int getNrOfTracks(){
-        return this.playListTracks.size();
-    }
-
-    public float getDuration(){
-        return (float) this.playListTracks.stream().mapToDouble(x -> x.getTrack().getDuration()).sum();
-    }
-
     private void reindex(List<PlayListTrack> playListTracks) {
         int i = 0;
         for (PlayListTrack track : playListTracks) {
@@ -115,5 +103,20 @@ public class PlayList {
         this.playListTracks.clear();
         this.playListTracks.addAll(newList);
     }
+
+    private int getValidIndex(int intendedIndex) throws PlaylistValidationException {
+        if (intendedIndex > this.playListTracks.size() || intendedIndex == -1) {
+            intendedIndex = this.playListTracks.size();
+        }
+        if(!isValidIndex(intendedIndex)){
+            throw new PlaylistValidationException();
+        }
+        return intendedIndex;
+    }
+
+    private boolean isValidIndex(int intendedIndex) {
+        return intendedIndex >= 0 && intendedIndex <= this.playListTracks.size();
+    }
+
 
 }
