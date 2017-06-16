@@ -1,106 +1,119 @@
 package com.tidal.refactoring.playlist.data;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import com.tidal.refactoring.playlist.exception.PlaylistValidationException;
+import lombok.Data;
+
+import java.util.*;
 
 
 /**
  * A very simplified version of TrackPlaylist
  */
+@Data
 public class PlayList {
-
     private Integer id;
     private String playListName;
-    private Set<PlayListTrack> playListTracks = new HashSet<PlayListTrack>();
+    private LinkedHashSet<PlayListTrack> playListTracks;
     private Date registeredDate;
     private Date lastUpdated;
     private String uuid;
-    private int nrOfTracks;
     private boolean deleted;
-    private Float duration;
 
     public PlayList() {
         this.uuid = UUID.randomUUID().toString();
         Date d = new Date();
         this.registeredDate = d;
         this.lastUpdated = d;
-        this.playListTracks = new HashSet<PlayListTrack>();
+        this.playListTracks = new LinkedHashSet<>();
     }
 
-
-    public Integer getId() {
-        return id;
+    public void setPlayListTracks(Set<PlayListTrack> tracks){
+        playListTracks = new LinkedHashSet<>(new TreeSet<>(tracks));
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public int getValidIndex(int intendedIndex) throws PlaylistValidationException {
+        if (intendedIndex > this.playListTracks.size() || intendedIndex == -1) {
+            intendedIndex = this.playListTracks.size();
+        }
+        if(!isValidIndex(intendedIndex)){
+            throw new PlaylistValidationException();
+        }
+        return intendedIndex;
     }
 
-    public String getPlayListName() {
-        return playListName;
+    public boolean isValidIndex(int intendedIndex) {
+        return intendedIndex >= 0 && intendedIndex <= this.playListTracks.size();
     }
 
-    public void setPlayListName(String playListName) {
-        this.playListName = playListName;
+    public List<PlayListTrack> addTracks(List<Track> tracksToAdd, int toIndex) throws PlaylistValidationException {
+        // The index is out of bounds, put it in the end of the list.
+        toIndex = this.getValidIndex(toIndex);
+
+        List<PlayListTrack> added = new ArrayList<>(tracksToAdd.size());
+        List<PlayListTrack> tracks = new LinkedList<>(this.playListTracks);
+        for (Track track : tracksToAdd) {
+            PlayListTrack playlistTrack = new PlayListTrack();
+            playlistTrack.setTrack(track);
+            playlistTrack.setPlaylist(this);
+            playlistTrack.setDateAdded(new Date());
+            tracks.add(toIndex, playlistTrack);
+            added.add(playlistTrack);
+            toIndex++;
+        }
+
+        reindex(tracks);
+
+        resetPlayList(tracks);
+        return added;
     }
 
-    public Set<PlayListTrack> getPlayListTracks() {
-        return playListTracks;
+    public List<PlayListTrack> removeTracks(List<Integer> indexes) {
+
+        List<PlayListTrack> original = new LinkedList<>(this.playListTracks);
+        List<PlayListTrack> removed = new ArrayList<>(indexes.size());
+        //populate the remove list first, before deleting from the original list.
+        //had to do this to retain the sequence.
+        for(int idx:indexes){
+            if(this.isValidIndex(idx)){
+                removed.add(original.get(idx-1));
+            }
+        }
+        if(removed.size()==0){
+            return Collections.EMPTY_LIST;
+        }
+        //Reverse sort - so that indexes are not messed up while removing.
+        indexes.sort(Collections.reverseOrder());
+        for(int idx:indexes){
+            if(this.isValidIndex(idx)) {
+                original.remove(idx - 1);
+            }
+        }
+
+        //3. reindex.
+        reindex(original);
+        //change the original playList object.
+        resetPlayList(original);
+        return removed;
     }
 
-    public void setPlayListTracks(Set<PlayListTrack> playListTracks) {
-        this.playListTracks = playListTracks;
+    //derived fields:
+    public int getNrOfTracks(){
+        return this.playListTracks.size();
     }
 
-    public Date getRegisteredDate() {
-        return registeredDate;
+    public float getDuration(){
+        return (float) this.playListTracks.stream().mapToDouble(x -> x.getTrack().getDuration()).sum();
     }
 
-    public void setRegisteredDate(Date registeredDate) {
-        this.registeredDate = registeredDate;
+    private void reindex(List<PlayListTrack> playListTracks) {
+        int i = 0;
+        for (PlayListTrack track : playListTracks) {
+            track.setIndex(i++);
+        }
     }
-
-    public Date getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public int getNrOfTracks() {
-        return nrOfTracks;
-    }
-
-    public void setNrOfTracks(int nrOfTracks) {
-        this.nrOfTracks = nrOfTracks;
-    }
-
-    public Float getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Float duration) {
-        this.duration = duration;
+    private void resetPlayList(List<PlayListTrack> newList) {
+        this.playListTracks.clear();
+        this.playListTracks.addAll(newList);
     }
 
 }

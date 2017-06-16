@@ -20,10 +20,8 @@ public class AbstractTest {
         }
         PlayList trackPlayList = new PlayList();
         trackPlayList.setDeleted(false);
-        trackPlayList.setDuration((float) (60 * 60 * 2));
         trackPlayList.setId(49834);
         trackPlayList.setLastUpdated(new Date());
-        trackPlayList.setNrOfTracks(nrOfTracks);
         trackPlayList.setPlayListName("Collection of great songs");
         trackPlayList.setPlayListTracks(getPlaylistTracks(nrOfTracks));
         trackPlayList.setUuid(uuid);

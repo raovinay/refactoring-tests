@@ -58,7 +58,7 @@ public class PlaylistBusinessBeanTest extends AbstractTest {
         assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
         assertEquals(5, playListTracks.get(0).getIndex());
         assertEquals(6, playListTracks.get(1).getIndex());
-        assertEquals(new Float(60*60*2+50*2), playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
+        assertEquals(67780f, playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
