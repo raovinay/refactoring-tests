@@ -30,6 +30,14 @@ public class AbstractPlayListTest {
         assertThat(finalPlayList.getDuration(), is(equalTo(finalDuration)));
     }
 
+    void assertRemovedList(List<PlayListTrack> removedTracks, int removedCount, List<Integer> indices) {
+        assertThat(removedTracks.size(), is(removedCount));
+        for(int i =0 ; i<removedCount;i++){
+            assertThat(removedTracks.get(i).getId(), is(equalTo(indices.get(i))));
+        }
+    }
+
+
     //private test helper methods
     protected PlayList getDefaultPlaylist(String uuid, int nrOfTracks) {
         if(nrOfTracks==0){
