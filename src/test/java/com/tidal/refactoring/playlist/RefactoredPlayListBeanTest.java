@@ -79,20 +79,6 @@ public class RefactoredPlayListBeanTest extends AbstractPlayListTest{
         playlistBusinessBean.addTracks("TEST", trackList, 5);
     }
 
-    @Test
-    public void addWithValidationExceptionTest() throws PlaylistValidationException {
-        List<Track> trackList = getTracksForTest(2);
-
-        PlayList mock = mock(PlayList.class);
-        when(playlistDaoBean.getPlaylistByUUID(Mockito.anyString())).thenReturn(mock);
-        when(mock.getNrOfTracks()).thenReturn(100);
-        when(mock.addTracks(Mockito.anyList(), Mockito.anyInt())).thenThrow(new PlaylistValidationException());
-
-        List<PlayListTrack> result = playlistBusinessBean.addTracks("TEST", trackList, 5);
-
-        assertThat(result.size(), is(equalTo(0)));
-    }
-
     @Test(expectedExceptions = PlaylistException.class)
     public void genericExceptionTest() throws PlaylistValidationException {
         List<Track> trackList = getTracksForTest(2);

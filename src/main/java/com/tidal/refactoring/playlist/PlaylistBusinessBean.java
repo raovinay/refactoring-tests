@@ -14,7 +14,7 @@ import java.util.*;
 
 public class PlaylistBusinessBean {
 
-    public static final int MAX_PLAYLIST_SIZE = 500;
+    private static final int MAX_PLAYLIST_SIZE = 500;
     private PlaylistDaoBean playlistDaoBean;
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistBusinessBean.class);
 
@@ -26,7 +26,7 @@ public class PlaylistBusinessBean {
     /**
      * Add tracks to the index
      */
-    List<PlayListTrack> addTracks(String uuid, List<Track> tracksToAdd, int toIndex) throws PlaylistException {
+    List<PlayListTrack> addTracks(final String uuid, final List<Track> tracksToAdd, final int toIndex) throws PlaylistException {
 
         try {
 
@@ -39,10 +39,6 @@ public class PlaylistBusinessBean {
             //any method to invoke dao and save the final playlist should come here.
             return playList.addTracks(tracksToAdd, toIndex);
 
-        }
-        catch(PlaylistValidationException e){
-            LOGGER.error("Encountered a validation exception. Operation aborted.", e);
-            return Collections.EMPTY_LIST;
         }
         catch (PlaylistException e){
             LOGGER.error("System Exception. Cannot proceed. ", e);

@@ -2,7 +2,9 @@ package com.tidal.refactoring.playlist;
 
 import com.tidal.refactoring.playlist.data.PlayList;
 import com.tidal.refactoring.playlist.data.PlayListTrack;
+import com.tidal.refactoring.playlist.data.Track;
 import com.tidal.refactoring.playlist.exception.PlaylistValidationException;
+import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -13,6 +15,8 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by raovinay on 19-06-2017.
@@ -50,9 +54,13 @@ public class RefactoredPlayListTest extends AbstractPlayListTest{
         assertAddedTracks(addedTracks, 2, 50);
     }
 
-    @Test(expectedExceptions = PlaylistValidationException.class)
-    public void invalidIndexTest() throws PlaylistValidationException {
-        playList.addTracks(getTracksForTest(2), -5);
+
+    @Test
+    public void addWithValidationExceptionTest() throws PlaylistValidationException {
+        List<PlayListTrack> addedTracks = playList.addTracks(getTracksForTest(2), -5);
+
+        assertFinalPlaylist(playList, 50, 9000f);
+        assertAddedTracks(addedTracks, 0, 0);
     }
 
     @Test
