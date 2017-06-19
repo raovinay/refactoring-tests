@@ -26,15 +26,8 @@ public class PlaylistDaoBean {
     }
 
     private PlayList createPlayList(String uuid) {
-        PlayList trackPlayList = new PlayList();
-
-        trackPlayList.setDeleted(false);
-        trackPlayList.setDuration((float) (60 * 60 * 2));
-        trackPlayList.setId(49834);
-        trackPlayList.setLastUpdated(new Date());
-        trackPlayList.setNrOfTracks(376);
-        trackPlayList.setPlayListName("Collection of great songs");
-        trackPlayList.setPlayListTracks(getPlaylistTracks());
+        PlayList trackPlayList = new PlayList(49834, "Collection of great songs", uuid);
+        trackPlayList.setPlayListTracks(getPlaylistTracks(trackPlayList));
         trackPlayList.setUuid(uuid);
 
         playlists.put(uuid, trackPlayList);
@@ -42,16 +35,12 @@ public class PlaylistDaoBean {
         return trackPlayList;
     }
 
-    private static Set<PlayListTrack> getPlaylistTracks() {
+    private static Set<PlayListTrack> getPlaylistTracks(PlayList playList) {
 
         Set<PlayListTrack> playListTracks = new HashSet<PlayListTrack>();
         for (int i = 0; i < 376; i++) {
-            PlayListTrack playListTrack = new PlayListTrack();
-            playListTrack.setDateAdded(new Date());
-            playListTrack.setId(i + 1);
+            PlayListTrack playListTrack = new PlayListTrack(i + 1, playList, getTrack());
             playListTrack.setIndex(i);
-            playListTrack.setTrack(getTrack());
-
             playListTracks.add(playListTrack);
         }
 
@@ -60,14 +49,8 @@ public class PlaylistDaoBean {
 
     public static Track getTrack() {
         Random randomGenerator = new Random();
-
-        Track track = new Track();
-        track.setArtistId(randomGenerator.nextInt(10000));
-        track.setDuration(60 * 3);
-
         int trackNumber = randomGenerator.nextInt(15);
-        track.setTitle("Track no: " + trackNumber);
-
+        Track track = new Track(trackNumber, "Track no: " + trackNumber, 60 * 3, randomGenerator.nextInt(10000));
         return track;
     }
 }
