@@ -1,14 +1,15 @@
 package com.tidal.refactoring.playlist.data;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class Track {
 
+    private int id;
     private String title;
     private float duration;
-
     private int artistId;
-    private int id;
 
     }

@@ -1,6 +1,5 @@
 package com.tidal.refactoring.playlist;
 
-import com.google.inject.Inject;
 import com.tidal.refactoring.playlist.dao.PlaylistDaoBean;
 import com.tidal.refactoring.playlist.data.PlayList;
 import com.tidal.refactoring.playlist.data.PlayListTrack;
@@ -20,8 +19,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-public class PlaylistBusinessBeanTest extends AbstractTest {
+public class PlaylistBusinessBeanTest extends AbstractPlayListTest {
     @InjectMocks
     PlaylistBusinessBean playlistBusinessBean;
 
@@ -51,28 +52,26 @@ public class PlaylistBusinessBeanTest extends AbstractTest {
         List<Track> trackList = getTracksForTest(2);
         String uuid = UUID.randomUUID().toString();
         when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid,376));
-        List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
 
-        assertEquals(2, playListTracks.size());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(5, playListTracks.get(0).getIndex());
-        assertEquals(6, playListTracks.get(1).getIndex());
-        assertEquals(67780f, playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
+        List<PlayListTrack> addedTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
+
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertAddedTracks(addedTracks, 2, 5);
+        assertFinalPlaylist(finalPlayList, 378, 67780f);
     }
+
 
     @Test
     public void testAddTracksLast() throws Exception {
         List<Track> trackList = getTracksForTest(2);
         String uuid = UUID.randomUUID().toString();
         when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid,376));
-        List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, -1);
 
-        assertEquals(2, playListTracks.size());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(376, playListTracks.get(0).getIndex());
-        assertEquals(377, playListTracks.get(1).getIndex());
+        List<PlayListTrack> addedTracks = playlistBusinessBean.addTracks(uuid, trackList, -1);
+
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertAddedTracks(addedTracks, 2, 376);
+        assertFinalPlaylist(finalPlayList, 378, 67780f);
     }
 
     @Test
@@ -80,32 +79,29 @@ public class PlaylistBusinessBeanTest extends AbstractTest {
         List<Track> trackList = getTracksForTest(2);
         String uuid = UUID.randomUUID().toString();
         when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid, 376));
-        List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 400);
 
-        assertEquals(2, playListTracks.size());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(376, playListTracks.get(0).getIndex());
-        assertEquals(377, playListTracks.get(1).getIndex());
+        List<PlayListTrack> addedTracks = playlistBusinessBean.addTracks(uuid, trackList, 400);
+
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertAddedTracks(addedTracks, 2, 376);
+        assertFinalPlaylist(finalPlayList, 378, 67780f);
     }
 
     @Test
     public void testAddToEmptyPlaylist() throws Exception {
         List<Track> trackList = getTracksForTest(2);
-        when(playlistDaoBean.getPlaylistByUUID("TestUUID")).thenReturn(new PlayList());
+        when(playlistDaoBean.getPlaylistByUUID("TestUUID")).thenReturn(new PlayList(null, null, null));
 
-        List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks("TestUUID", trackList, 5);
+        List<PlayListTrack> addedTracks = playlistBusinessBean.addTracks("TestUUID", trackList, 5);
 
-        assertEquals(2, playListTracks.size());
-        assertEquals(2, playlistDaoBean.getPlaylistByUUID("TestUUID").getNrOfTracks());
-        assertEquals(2, playlistDaoBean.getPlaylistByUUID("TestUUID").getPlayListTracks().size());
-        assertEquals(0, playListTracks.get(0).getIndex());
-        assertEquals(1, playListTracks.get(1).getIndex());
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID("TestUUID");
+        assertAddedTracks(addedTracks, 2, 0);
+        assertFinalPlaylist(finalPlayList, 2, 100);
     }
 
     @Test
     public void testAddTrackNegativeIndex() throws Exception {
-        when(playlistDaoBean.getPlaylistByUUID("TestUUID")).thenReturn(new PlayList());
+        when(playlistDaoBean.getPlaylistByUUID("TestUUID")).thenReturn(new PlayList(null, null, null));
         List<Track> trackList = getTracksForTest(2);
 
         List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks("TestUUID", trackList, -2);
@@ -131,12 +127,11 @@ public class PlaylistBusinessBeanTest extends AbstractTest {
         String uuid = UUID.randomUUID().toString();
         when(playlistDaoBean.getPlaylistByUUID(uuid)).thenReturn(getDefaultPlaylist(uuid, 376));
 
-        List<PlayListTrack> playListTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
-        assertEquals(2, playListTracks.size());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(378, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(5, playListTracks.get(0).getIndex());
-        assertEquals(6, playListTracks.get(1).getIndex());
+        List<PlayListTrack> addedTracks = playlistBusinessBean.addTracks(uuid, trackList, 5);
+
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertAddedTracks(addedTracks, 2, 5);
+        assertFinalPlaylist(finalPlayList, 378, 68040f);
     }
 
     @Test(expectedExceptions = PlaylistException.class)

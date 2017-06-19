@@ -2,6 +2,8 @@ package com.tidal.refactoring.playlist.data;
 
 import com.tidal.refactoring.playlist.exception.PlaylistValidationException;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -9,22 +11,27 @@ import java.util.*;
 /**
  * A very simplified version of TrackPlaylist
  */
-@Data
+@Getter
 public class PlayList {
     private Integer id;
+    @Setter
     private String playListName;
     private LinkedHashSet<PlayListTrack> playListTracks;
     private Date registeredDate;
     private Date lastUpdated;
+    @Setter
     private String uuid;
+    @Setter
     private boolean deleted;
 
-    public PlayList() {
-        this.uuid = UUID.randomUUID().toString();
+    public PlayList(Integer id, String playListName, String uuid) {
+        this.uuid = uuid==null?UUID.randomUUID().toString():uuid;
         Date d = new Date();
         this.registeredDate = d;
         this.lastUpdated = d;
         this.playListTracks = new LinkedHashSet<>();
+        this.id=id;
+        this.playListName=playListName;
     }
 
     //derived fields:
@@ -49,10 +56,7 @@ public class PlayList {
         List<PlayListTrack> added = new ArrayList<>(tracksToAdd.size());
         List<PlayListTrack> tracks = new LinkedList<>(this.playListTracks);
         for (Track track : tracksToAdd) {
-            PlayListTrack playlistTrack = new PlayListTrack();
-            playlistTrack.setTrack(track);
-            playlistTrack.setPlaylist(this);
-            playlistTrack.setDateAdded(new Date());
+            PlayListTrack playlistTrack = new PlayListTrack(null, this, track);
             tracks.add(toIndex, playlistTrack);
             added.add(playlistTrack);
             toIndex++;

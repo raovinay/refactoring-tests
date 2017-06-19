@@ -1,13 +1,16 @@
 package com.tidal.refactoring.playlist;
 
-import com.google.inject.Inject;
 import com.tidal.refactoring.playlist.dao.PlaylistDaoBean;
+import com.tidal.refactoring.playlist.data.PlayList;
 import com.tidal.refactoring.playlist.data.PlayListTrack;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +19,11 @@ import java.util.UUID;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 
+
 /**
  * Created by raovinay on 08-06-2017.
  */
-public class PlaylistBusinessBeanDeleteTest extends AbstractTest{
+public class PlaylistBusinessBeanDeleteTest extends AbstractPlayListTest {
     @InjectMocks
     PlaylistBusinessBean playlistBusinessBean;
 
@@ -51,13 +55,13 @@ public class PlaylistBusinessBeanDeleteTest extends AbstractTest{
 
         List<PlayListTrack> playListTracks = playlistBusinessBean.removeTracks(uuid, tracksToDelete);
 
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertFinalPlaylist(finalPlayList, 1, 180f);
+        assertEquals(new Integer(5), playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().iterator().next().getId());
+
         assertEquals(4, playListTracks.size());
         assertEquals(1, playListTracks.get(0).getId().intValue());
         assertEquals(2, playListTracks.get(1).getId().intValue());
-        assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(new Integer(5), playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().iterator().next().getId());
-        assertEquals(180f, playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
@@ -68,13 +72,13 @@ public class PlaylistBusinessBeanDeleteTest extends AbstractTest{
 
         List<PlayListTrack> playListTracks = playlistBusinessBean.removeTracks(uuid, tracksToDelete);
 
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertFinalPlaylist(finalPlayList, 1, 180f);
+        assertEquals(new Integer(5), playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().iterator().next().getId());
+
         assertEquals(4, playListTracks.size());
         assertEquals(new Integer(4), playListTracks.get(0).getId());
         assertEquals(new Integer(3), playListTracks.get(1).getId());
-        assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(1, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(new Integer(5), playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().iterator().next().getId());
-        assertEquals(180f, playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
@@ -85,12 +89,12 @@ public class PlaylistBusinessBeanDeleteTest extends AbstractTest{
 
         List<PlayListTrack> playListTracks = playlistBusinessBean.removeTracks(uuid, tracksToDelete);
 
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertFinalPlaylist(finalPlayList, 3, 540f);
+
         assertEquals(2, playListTracks.size());
         assertEquals(new Integer(1), playListTracks.get(0).getId());
         assertEquals(new Integer(3), playListTracks.get(1).getId());
-        assertEquals(3, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(3, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(540f, playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
     @Test
@@ -101,10 +105,10 @@ public class PlaylistBusinessBeanDeleteTest extends AbstractTest{
 
         List<PlayListTrack> playListTracks = playlistBusinessBean.removeTracks(uuid, tracksToDelete);
 
+        PlayList finalPlayList = playlistDaoBean.getPlaylistByUUID(uuid);
+        assertFinalPlaylist(finalPlayList, 5, 900f);
+
         assertEquals(0, playListTracks.size());
-        assertEquals(5, playlistDaoBean.getPlaylistByUUID(uuid).getNrOfTracks());
-        assertEquals(5, playlistDaoBean.getPlaylistByUUID(uuid).getPlayListTracks().size());
-        assertEquals(900f, playlistDaoBean.getPlaylistByUUID(uuid).getDuration());
     }
 
 
